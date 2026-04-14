@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio | Jake Hewitt</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #f0f2f5;
+    --bg-card: #ffffff;
+    --bg-header: #1e293b;
+    --bg-thesis: #f1f5f9;
+    --border: #cbd5e1;
+    --border-light: #e2e8f0;
+    --text: #1e293b;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+    --green: #0d9488;
+    --green-bg: #f0fdfa;
+    --red: #dc2626;
+    --red-bg: #fef2f2;
+    --accent: #3b82f6;
+    --accent-dark: #1d4ed8;
+    --accent-bg: #eff6ff;
+    --accent-light: #dbeafe;
+    --new-tag: #2563eb;
+    --new-bg: #eff6ff;
+    --slate-50: #f8fafc;
+    --slate-100: #f1f5f9;
+    --slate-200: #e2e8f0;
+    --slate-600: #475569;
+    --slate-700: #334155;
+    --slate-800: #1e293b;
+    --slate-900: #0f172a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+
+  /* Header */
+  header {
+    background: linear-gradient(135deg, var(--slate-800) 0%, var(--slate-900) 100%);
+    padding: 44px 0 36px;
+    margin-bottom: 0;
+    color: white;
+  }
+  header h1 {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+    margin-bottom: 8px;
+    color: #fff;
+  }
+  header p {
+    font-size: 13.5px;
+    color: #94a3b8;
+    max-width: 640px;
+    line-height: 1.7;
+  }
+
+  /* Summary Stats */
+  .summary-bar {
+    background: white;
+    border: 1px solid var(--border-light);
+    border-radius: 10px;
+    margin: -20px 24px 28px;
+    max-width: 912px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 20px 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
+  }
+  .summary-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .summary-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .summary-value {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--slate-800);
+  }
+  .summary-value.green { color: var(--green); }
+
+  .update-line {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-align: right;
+  }
+  .live-indicator {
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--green);
+    margin-right: 4px;
+    vertical-align: middle;
+    animation: blink 3s infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  /* API Setup */
+  .api-setup {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    display: none;
+  }
+  .api-setup.visible { display: block; }
+  .api-setup input {
+    background: var(--slate-50);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    width: 240px;
+    margin: 8px 8px 0 0;
+    color: var(--text);
+  }
+  .api-setup button, .refresh-btn {
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .api-setup button:hover { background: var(--accent-dark); }
+  .api-setup a { color: var(--accent); }
+
+  /* Theme Section */
+  .theme-section { margin-bottom: 36px; }
+  .theme-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    margin-bottom: 10px;
+    background: var(--slate-800);
+    border-radius: 8px;
+  }
+  .theme-name {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: #fff;
+  }
+  .theme-alloc {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: #94a3b8;
+  }
+
+  /* Position Card */
+  .position {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    padding: 18px 20px;
+    margin-bottom: 8px;
+    transition: box-shadow 0.15s, border-color 0.15s;
+  }
+  .position:hover {
+    border-color: var(--border);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .position.is-new {
+    border-left: 3px solid var(--accent);
+    background: linear-gradient(90deg, #eff6ff 0%, #ffffff 6%);
+  }
+
+  .pos-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 4px;
+  }
+  .pos-left { flex: 1; min-width: 180px; }
+  .pos-right {
+    display: flex;
+    gap: 28px;
+    flex-wrap: wrap;
+  }
+
+  .ticker-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 2px;
+  }
+  .ticker {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--slate-800);
+  }
+  .new-tag {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-light);
+    border: 1px solid #93c5fd;
+    padding: 2px 7px;
+    border-radius: 3px;
+  }
+  .name-line {
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+  .date-line {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 3px;
+  }
+
+  .metric { text-align: right; min-width: 72px; }
+  .metric-val {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--slate-700);
+  }
+  .metric-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-top: 1px;
+  }
+  .green { color: var(--green); }
+  .red { color: var(--red); }
+
+  /* Allocation bar */
+  .alloc-bar-wrap {
+    height: 3px;
+    background: var(--slate-100);
+    border-radius: 2px;
+    margin: 10px 0;
+  }
+  .alloc-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), #60a5fa);
+    border-radius: 2px;
+  }
+
+  /* Thesis */
+  .thesis {
+    background: var(--slate-50);
+    border: 1px solid var(--border-light);
+    border-radius: 6px;
+    padding: 12px 14px;
+    margin-top: 8px;
+  }
+  .thesis-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+  .thesis-text {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+
+  /* Footer */
+  footer {
+    text-align: center;
+    padding: 28px 0 44px;
+    font-size: 11px;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border-light);
+    margin-top: 32px;
+    line-height: 1.8;
+  }
+
+  @media (max-width: 640px) {
+    .summary-bar { margin: -16px 12px 24px; padding: 16px 18px; gap: 12px; }
+    .summary-value { font-size: 17px; }
+    .pos-right { gap: 18px; }
+    .position { padding: 14px 16px; }
+    header { padding: 32px 0 28px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <h1>Jake Hewitt — Portfolio</h1>
+    <p>A concentrated, high-conviction portfolio built around macro themes I believe in: Bitcoin adoption, GSE privatization, AI infrastructure, defense modernization, the energy transition, and critical mineral supply chain security.</p>
+  </div>
+</header>
+
+<div class="summary-bar">
+  <div class="summary-item">
+    <span class="summary-label">Total Return</span>
+    <span class="summary-value green" id="totalReturn">+143.0%</span>
+  </div>
+  <div class="summary-item">
+    <span class="summary-label">Positions</span>
+    <span class="summary-value" id="positionCount">43</span>
+  </div>
+  <div class="summary-item">
+    <span class="summary-label">Themes</span>
+    <span class="summary-value">11</span>
+  </div>
+  <div class="summary-item update-line">
+    <span class="live-indicator" id="liveDot"></span>
+    <span id="updateTime">Prices as of April 13, 2026</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="api-setup" id="apiSetup">
+    For live price updates, enter a free <a href="https://finnhub.io/register" target="_blank">Finnhub API key</a>:
+    <br><input type="text" id="apiKeyInput" placeholder="API key" />
+    <button onclick="saveApiKey()">Activate</button>
+  </div>
+
+  <div id="portfolioContent"></div>
+
+  <footer>
+    This is a personal portfolio shared for informational purposes only. Not financial advice.<br>
+    Positions and commentary reflect my personal views and may be outdated. Do your own research.
+  </footer>
+</div>
+
+<script>
+const PORTFOLIO = [
+  // ── Bitcoin Ecosystem ──
+  {
+    symbol: "BTC", displaySymbol: "BTC", name: "Bitcoin",
+    theme: "Bitcoin Ecosystem", sector: "Cryptocurrency",
+    avgCost: 10007, lastPrice: 71002, pctGain: 619.5, pctPortfolio: 23.99,
+    firstBuy: "Sep 2023", lastBuy: "Ongoing DCA",
+    thesis: "The core position. Dollar-cost averaged since 2021 via River. Bitcoin is the hardest money ever created — a finite digital asset in a world of infinite money printing. With the halving complete, ETF inflows accelerating, and sovereign adoption beginning, this is a generational asymmetric bet. I believe BTC reaches $250K+ this cycle."
+  },
+  {
+    symbol: "WULF", name: "TeraWulf",
+    theme: "Bitcoin Ecosystem", sector: "Bitcoin Mining",
+    avgCost: 3.30, lastPrice: 19.03, pctGain: 476.8, pctPortfolio: 11.06,
+    firstBuy: "Sep 2023", lastBuy: "Nov 2025",
+    thesis: "Best-in-class Bitcoin miner with ~90% zero-carbon energy and the cheapest power in the industry thanks to their nuclear-adjacent facility. But WULF isn't just a miner anymore — they're pivoting their cheap, clean power infrastructure into HPC and AI computing. Data centers are desperate for low-cost energy, and WULF already has the power capacity and land to host high-performance compute workloads alongside mining. As mining difficulty increases post-halving, only the lowest-cost producers survive, and WULF's dual revenue stream from mining plus AI/HPC gives them an edge no other miner has."
+  },
+  {
+    symbol: "MSTR", name: "Strategy (MicroStrategy)",
+    theme: "Bitcoin Ecosystem", sector: "Bitcoin Treasury",
+    avgCost: 30.13, lastPrice: 128.86, pctGain: 327.7, pctPortfolio: 8.17,
+    firstBuy: "Oct 2023", lastBuy: "Jan 2024",
+    thesis: "Leveraged Bitcoin exposure through Saylor's corporate treasury strategy. MSTR pioneered the Bitcoin treasury model — they issue debt and equity to accumulate BTC, effectively giving shareholders leveraged upside to Bitcoin price appreciation. Premium to NAV is justified by their ability to continuously accrete more BTC per share."
+  },
+  {
+    symbol: "XXI", name: "Twenty One Capital",
+    theme: "Bitcoin Ecosystem", sector: "Bitcoin Treasury",
+    avgCost: 11.75, lastPrice: 6.64, pctGain: -43.5, pctPortfolio: 0.07,
+    firstBuy: "Dec 2025",
+    thesis: "New Bitcoin treasury company backed by Tether, SoftBank, and Cantor Fitzgerald. Small speculative position — if they execute on the MSTR playbook with institutional backing, there's significant upside from this entry point."
+  },
+
+  // ── GSE Reform ──
+  {
+    symbol: "FNMA", name: "Fannie Mae",
+    theme: "GSE Reform", sector: "Government-Sponsored Enterprise",
+    avgCost: 5.32, lastPrice: 7.86, pctGain: 47.6, pctPortfolio: 11.16,
+    firstBuy: "Nov 2024", lastBuy: "Jan 2025",
+    thesis: "The biggest privatization trade in a generation. Fannie Mae has been profitable for years, trapped in government conservatorship since 2008. With the current administration signaling GSE reform and recapitalization, FNMA could re-list at $30-50+ per share. High risk/reward binary outcome — but the political winds are finally favorable."
+  },
+  {
+    symbol: "FMCC", name: "Freddie Mac",
+    theme: "GSE Reform", sector: "Government-Sponsored Enterprise",
+    avgCost: 6.17, lastPrice: 6.95, pctGain: 12.6, pctPortfolio: 5.04,
+    firstBuy: "Nov 2024", lastBuy: "Jan 2025",
+    thesis: "Same privatization thesis as FNMA. Freddie Mac is the smaller sibling — if Fannie goes, Freddie goes with it. Holding both for maximum exposure to the GSE reform catalyst."
+  },
+  {
+    symbol: "QXO", name: "QXO",
+    theme: "GSE Reform", sector: "Building Products Distribution",
+    avgCost: 22.11, lastPrice: 22.11, pctGain: 0.0, pctPortfolio: 0.14,
+    firstBuy: "Apr 2026",
+    isNew: true,
+    thesis: "Brad Jacobs' latest roll-up play, this time in the $800B building products distribution market. Jacobs is arguably the best serial acquirer alive — he built XPO Logistics, GXO, and RXO into multi-billion dollar companies using the same playbook: enter a massive, fragmented industry, consolidate it through acquisitions, then drive margins with technology and operational discipline. Building products distribution is the perfect sandbox for him. Betting on the operator as much as the opportunity."
+  },
+
+  // ── AI & Computing ──
+  {
+    symbol: "NBIS", name: "Nebius Group",
+    theme: "AI & Computing", sector: "AI Infrastructure",
+    avgCost: 37.20, lastPrice: 136.33, pctGain: 266.5, pctPortfolio: 5.71,
+    firstBuy: "Apr 2025", lastBuy: "Jun 2025",
+    thesis: "Spun out of Yandex with massive GPU infrastructure already built. Nebius is becoming the AWS of AI for Europe and MENA — offering GPU cloud compute, AI training infrastructure, and managed ML services. They have the hardware moat (thousands of H100s deployed) and are growing revenue at triple digits."
+  },
+  {
+    symbol: "PLTR", name: "Palantir Technologies",
+    theme: "AI & Computing", sector: "AI Software",
+    avgCost: 40.89, lastPrice: 130.49, pctGain: 219.1, pctPortfolio: 1.56,
+    firstBuy: "Oct 2024",
+    thesis: "Palantir owns the AI operating system for both government and enterprise. Their AIP platform is sticky — once organizations build workflows on Palantir, switching costs are astronomical. Government contracts provide stable cash flow while commercial is accelerating."
+  },
+  {
+    symbol: "VRT", name: "Vertiv Holdings",
+    theme: "AI & Computing", sector: "Data Center Infrastructure",
+    avgCost: 113.61, lastPrice: 287.64, pctGain: 153.2, pctPortfolio: 0.67,
+    firstBuy: "Aug 2023", lastBuy: "Oct 2024",
+    thesis: "Picks-and-shovels play on AI data centers. Vertiv makes the cooling, power distribution, and infrastructure that every data center needs. As AI drives an explosion in data center buildouts, Vertiv's order book is surging."
+  },
+  {
+    symbol: "VERI", name: "Veritone",
+    theme: "AI & Computing", sector: "AI Software",
+    avgCost: 5.13, lastPrice: 1.89, pctGain: -63.1, pctPortfolio: 0.18,
+    firstBuy: "2024",
+    thesis: "Speculative AI media and content platform play. The thesis hasn't played out as expected — keeping a small position in case their aiWare platform gains traction, but this is a watch-and-reassess situation."
+  },
+
+  // ── Defense & Aerospace ──
+  {
+    symbol: "RCAT", name: "Red Cat Holdings",
+    theme: "Defense & Aerospace", sector: "Military Drones",
+    avgCost: 6.30, lastPrice: 11.93, pctGain: 89.3, pctPortfolio: 4.67,
+    firstBuy: "Oct 2024",
+    thesis: "U.S. military drone manufacturer riding the massive shift toward autonomous warfare systems. Selected for the Army's SRR program. As the DoD pivots from billion-dollar platforms to swarms of low-cost drones (lessons from Ukraine), RCAT is one of the few pure-play domestic drone companies."
+  },
+  {
+    symbol: "KRMN", name: "Karman Holdings",
+    theme: "Defense & Aerospace", sector: "Propulsion & Energetics",
+    avgCost: 68.38, lastPrice: 84.22, pctGain: 23.2, pctPortfolio: 1.09,
+    firstBuy: "Dec 2025",
+    thesis: "Defense and space propulsion company with deep DoD relationships. Provides rocket motors, energetics, and propulsion systems critical to U.S. missile and space launch programs. Benefiting from the multi-year defense spending upcycle."
+  },
+  {
+    symbol: "RKLB", name: "Rocket Lab",
+    theme: "Defense & Aerospace", sector: "Space Launch",
+    avgCost: 10.28, lastPrice: 66.74, pctGain: 549.5, pctPortfolio: 0.99,
+    firstBuy: "Oct 2024",
+    thesis: "The only credible competitor to SpaceX in small-to-medium launch. Electron is the most frequently launched U.S. rocket besides Falcon 9, and Neutron will unlock a much larger addressable market. Their space systems division is an underappreciated revenue driver."
+  },
+  {
+    symbol: "HWM", name: "Howmet Aerospace",
+    theme: "Defense & Aerospace", sector: "Aerospace Materials",
+    avgCost: 105.20, lastPrice: 254.06, pctGain: 141.5, pctPortfolio: 0.92,
+    firstBuy: "Oct 2024",
+    thesis: "Supplier of advanced engineered components for jet engines and defense systems. Near-monopoly on certain titanium and nickel superalloy parts that go into every commercial and military aircraft engine. Exceptional pricing power."
+  },
+  {
+    symbol: "KRKNF", name: "Kraken Robotics",
+    theme: "Defense & Aerospace", sector: "Underwater Defense",
+    avgCost: 3.98, lastPrice: 6.10, pctGain: 53.3, pctPortfolio: 0.75,
+    firstBuy: "Oct 2025",
+    thesis: "Canadian underwater robotics and sonar company serving NATO navies. Specializes in mine detection, seabed mapping, and underwater security — areas getting massive funding as undersea cable protection becomes a national security priority."
+  },
+
+  // ── Energy Transition ──
+  {
+    symbol: "OKLO", name: "Oklo",
+    theme: "Energy Transition", sector: "Nuclear / SMR",
+    avgCost: 14.02, lastPrice: 47.75, pctGain: 240.7, pctPortfolio: 3.05,
+    firstBuy: "Oct 2024",
+    thesis: "Sam Altman-backed next-gen nuclear company building small modular reactors. AI data centers need 24/7 clean baseload power, and Oklo's compact fast reactors are designed for this. They have a fuel recycling agreement with the DOE and contracts with data center operators."
+  },
+  {
+    symbol: "HGRAF", name: "HydroGraph Clean Power",
+    theme: "Energy Transition", sector: "Advanced Materials",
+    avgCost: 1.58, lastPrice: 4.62, pctGain: 191.9, pctPortfolio: 1.44,
+    firstBuy: "Sep 2025",
+    thesis: "Produces high-purity graphene using a detonation synthesis process. Graphene has massive potential in batteries, composites, and coatings. Early-stage but their production method is scalable and they're landing commercial partnerships."
+  },
+  {
+    symbol: "GEV", name: "GE Vernova",
+    theme: "Energy Transition", sector: "Grid Infrastructure",
+    avgCost: 269.71, lastPrice: 968.02, pctGain: 258.9, pctPortfolio: 0.88,
+    firstBuy: "Sep 2024", lastBuy: "Oct 2024",
+    thesis: "GE's energy spin-off is the backbone of grid modernization. They make gas turbines, wind turbines, and grid equipment needed for the energy transition. As AI-driven electricity demand surges, GEV's order book is exploding."
+  },
+  {
+    symbol: "LEU", name: "Centrus Energy",
+    theme: "Energy Transition", sector: "Nuclear Fuel",
+    avgCost: 191.78, lastPrice: 191.78, pctGain: 0.0, pctPortfolio: 0.98,
+    firstBuy: "Apr 2026",
+    isNew: true,
+    thesis: "Centrus operates the only uranium enrichment facility in the United States and is the sole domestic producer of HALEU — the high-assay fuel required by next-gen reactors from Oklo, TerraPower, and others. They effectively have a chokehold on the entire U.S. nuclear buildout. As the country moves to cut dependence on Russian nuclear fuel imports and the DOE funds new reactor designs, every path runs through Centrus. Domestic enrichment monopoly plus HALEU gives them leverage across the full nuclear fuel chain."
+  },
+  {
+    symbol: "UUUU", name: "Energy Fuels",
+    theme: "Energy Transition", sector: "Uranium & Rare Earths",
+    avgCost: 24.45, lastPrice: 18.32, pctGain: -25.1, pctPortfolio: 0.73,
+    firstBuy: "Oct 2025",
+    thesis: "U.S. uranium miner and rare earth processor. Dual exposure to the nuclear renaissance and critical minerals. One of the few companies with a licensed U.S. uranium mill. Underwater but the long-term supply/demand dynamics for uranium are favorable."
+  },
+  {
+    symbol: "ASPI", name: "ASP Isotopes",
+    theme: "Energy Transition", sector: "Nuclear Enrichment",
+    avgCost: 6.12, lastPrice: 4.21, pctGain: -31.2, pctPortfolio: 0.66,
+    firstBuy: "Nov 2025",
+    thesis: "Developing laser-based uranium enrichment technology. If their enrichment process works at scale, it would be a breakthrough for nuclear fuel supply. Very speculative — a technology bet, not a value play."
+  },
+  {
+    symbol: "BE", name: "Bloom Energy",
+    theme: "Energy Transition", sector: "Fuel Cells",
+    avgCost: 176.28, lastPrice: 176.28, pctGain: 0.0, pctPortfolio: 0.24,
+    firstBuy: "Apr 2026",
+    isNew: true,
+    thesis: "Bloom's solid oxide fuel cells can provide on-site, always-on power for AI data centers that can't wait years for grid upgrades and new transmission lines. Hyperscalers need power now, and Bloom can deploy megawatts of clean generation directly at the facility in months, not years. As the gap between data center power demand and grid capacity widens, Bloom is one of the few companies that can fill it immediately."
+  },
+  {
+    symbol: "EOSE", name: "Eos Energy Enterprises",
+    theme: "Energy Transition", sector: "Energy Storage",
+    avgCost: 6.23, lastPrice: 6.23, pctGain: 0.0, pctPortfolio: 0.24,
+    firstBuy: "Apr 2026",
+    isNew: true,
+    thesis: "Eos makes zinc-bromine batteries designed for grid-scale, long-duration energy storage. Unlike lithium, zinc is abundant, domestically sourced, non-flammable, and avoids the entire Chinese-controlled lithium supply chain. The grid desperately needs 4-12 hour storage capacity that lithium-ion can't economically deliver, and Eos is building the American manufacturing base to fill that gap. Early stage but the technology-market fit is strong."
+  },
+
+  // ── Diversified Growth ──
+  {
+    symbol: "FDGRX", name: "Fidelity Growth Company Fund",
+    theme: "Diversified Growth", sector: "Mutual Fund",
+    avgCost: 35.68, lastPrice: 49.64, pctGain: 39.1, pctPortfolio: 4.37,
+    firstBuy: "2022",
+    thesis: "My 401k holding — Fidelity's flagship growth fund managed by Steve Wymer. Concentrated portfolio of high-growth companies with a stellar long-term track record. Gives me diversified exposure to mega-cap growth names I don't hold individually."
+  },
+
+  // ── Big Tech ──
+  {
+    symbol: "GOOGL", name: "Alphabet (Class A)",
+    theme: "Big Tech", sector: "Internet / AI",
+    avgCost: 164.73, lastPrice: 318.49, pctGain: 93.3, pctPortfolio: 1.89,
+    firstBuy: "Aug 2023", lastBuy: "Oct 2024",
+    thesis: "Google is undervalued relative to its AI capabilities. Best AI research lab (DeepMind), best AI infrastructure (TPUs + cloud), most training data, and a dominant search moat that AI enhances rather than disrupts. Trimmed class C shares to fund new positions — keeping class A for the voting rights."
+  },
+
+  // ── Semiconductors & Photonics ──
+  {
+    symbol: "CLS", name: "Celestica",
+    theme: "Semiconductors & Photonics", sector: "Data Center Hardware",
+    avgCost: 59.59, lastPrice: 328.33, pctGain: 451.0, pctPortfolio: 1.35,
+    firstBuy: "Jun 2024", lastBuy: "Oct 2024",
+    thesis: "Contract manufacturer for hyperscale data center hardware — networking switches, server assemblies, and storage. Direct beneficiary of the AI capex supercycle. Revenue is surging as big tech races to build out AI compute infrastructure."
+  },
+  {
+    symbol: "SKYT", name: "SkyWater Technology",
+    theme: "Semiconductors & Photonics", sector: "Domestic Foundry",
+    avgCost: 15.77, lastPrice: 28.43, pctGain: 80.3, pctPortfolio: 0.88,
+    firstBuy: "Sep 2025",
+    thesis: "U.S.-based semiconductor foundry focused on rad-hard chips for defense and aerospace. As the CHIPS Act drives re-shoring, SkyWater is one of the few trusted domestic fabs with security clearances for classified government chip programs."
+  },
+  {
+    symbol: "AAOI", name: "Applied Optoelectronics",
+    theme: "Semiconductors & Photonics", sector: "Optical Transceivers",
+    avgCost: 121.89, lastPrice: 133.30, pctGain: 9.4, pctPortfolio: 0.16,
+    firstBuy: "2025",
+    thesis: "Makes optical transceivers for data center interconnects. As AI clusters scale, the demand for high-speed optical links between GPUs and switches is exploding. Small position with optionality if their 800G/1.6T products gain share."
+  },
+  {
+    symbol: "AMBA", name: "Ambarella",
+    theme: "Semiconductors & Photonics", sector: "Edge AI Chips",
+    avgCost: 53.00, lastPrice: 53.00, pctGain: 0.0, pctPortfolio: 0.25,
+    firstBuy: "Apr 2026",
+    isNew: true,
+    thesis: "Ambarella makes the best low-power AI vision processors for edge computing — the chips that let devices see and think without sending data to the cloud. Their CVflow architecture powers autonomous vehicles, drones, robotics, and smart security cameras. As AI moves from the data center to the real world, Ambarella's full edge AI stack across automotive, security, and robotics positions them at the center of that shift."
+  },
+  {
+    symbol: "MTSI", name: "MACOM Technology Solutions",
+    theme: "Semiconductors & Photonics", sector: "Analog Semiconductors",
+    avgCost: 224.01, lastPrice: 247.71, pctGain: 10.6, pctPortfolio: 0.09,
+    firstBuy: "2025",
+    thesis: "Analog and mixed-signal semiconductor company serving telecom, data center, and defense. High-margin, asset-light model with leverage to 5G, data center connectivity, and defense electronics."
+  },
+
+  // ── Critical Minerals ──
+  {
+    symbol: "TUNGF", name: "American Tungsten",
+    theme: "Critical Minerals", sector: "Tungsten",
+    avgCost: 1.20, lastPrice: 2.17, pctGain: 80.2, pctPortfolio: 0.88,
+    firstBuy: "Sep 2025",
+    thesis: "Tungsten is a critical mineral for defense (armor-piercing rounds, missile components) with no viable substitute. China controls 80%+ of global supply. American Tungsten is developing domestic deposits — a direct play on critical mineral supply chain security."
+  },
+  {
+    symbol: "MP", name: "MP Materials",
+    theme: "Critical Minerals", sector: "Rare Earths",
+    avgCost: 62.56, lastPrice: 53.90, pctGain: -13.8, pctPortfolio: 0.80,
+    firstBuy: "Jul 2025",
+    thesis: "Operates Mountain Pass, the only scaled rare earth mine in the Western Hemisphere. Rare earths are essential for EV motors, wind turbines, and defense systems. Underwater but the strategic value of domestic rare earth supply is only increasing."
+  },
+  {
+    symbol: "ORN", name: "Orion Group Holdings",
+    theme: "Critical Minerals", sector: "Marine Construction",
+    avgCost: 11.83, lastPrice: 11.83, pctGain: 0.0, pctPortfolio: 0.49,
+    firstBuy: "Apr 2026",
+    isNew: true,
+    thesis: "Marine and heavy civil construction contractor benefiting from the massive infrastructure spending wave. The IIJA is funneling billions into ports, bridges, waterways, and coastal resilience — exactly the type of projects Orion specializes in. Their backlog is growing as federal infrastructure dollars finally flow to contractors. Small-cap with real revenue and a tangible tailwind that has years left to run."
+  },
+  {
+    symbol: "TMC", name: "TMC The Metals Company",
+    theme: "Critical Minerals", sector: "Deep-Sea Mining",
+    avgCost: 10.39, lastPrice: 4.42, pctGain: -57.5, pctPortfolio: 0.45,
+    firstBuy: "Oct 2025",
+    thesis: "Deep-sea mining company targeting polymetallic nodules containing nickel, cobalt, manganese, and copper. Controversial but the resource is massive. Waiting on ISA regulatory clarity. High-risk position."
+  },
+  {
+    symbol: "UAMY", name: "United States Antimony",
+    theme: "Critical Minerals", sector: "Antimony",
+    avgCost: 1.19, lastPrice: 8.77, pctGain: 636.9, pctPortfolio: 0.32,
+    firstBuy: "2024",
+    thesis: "Only primary antimony smelter in the U.S. Antimony is critical for ammunition, flame retardants, and battery tech — and China just banned exports. UAMY went from obscure micro-cap to strategic asset overnight."
+  },
+
+  // ── Next-Gen Tech ──
+  {
+    symbol: "AMPX", name: "Amprius Technologies",
+    theme: "Next-Gen Tech", sector: "Advanced Batteries",
+    avgCost: 11.99, lastPrice: 16.15, pctGain: 34.7, pctPortfolio: 1.12,
+    firstBuy: "Nov 2025",
+    thesis: "Making silicon anode lithium-ion batteries with the highest energy density commercially available. Their batteries power drones and aviation applications where weight matters most. As they scale manufacturing, the addressable market expands to EVs."
+  },
+  {
+    symbol: "EVLV", name: "Evolv Technologies",
+    theme: "Next-Gen Tech", sector: "Security Screening",
+    avgCost: 6.76, lastPrice: 6.10, pctGain: -9.7, pctPortfolio: 0.76,
+    firstBuy: "Dec 2025",
+    thesis: "AI-powered weapons detection for venues, schools, and stadiums. Their touchless screening systems are replacing metal detectors at major venues nationwide. Subscription revenue is growing and installed base is expanding."
+  },
+  {
+    symbol: "UMAC", name: "Unusual Machines",
+    theme: "Next-Gen Tech", sector: "Consumer Drones",
+    avgCost: 15.25, lastPrice: 12.41, pctGain: -18.6, pctPortfolio: 0.40,
+    firstBuy: "Dec 2024",
+    thesis: "U.S.-based consumer and commercial drone company positioning as the domestic alternative to DJI amid the growing push to ban Chinese drones. If DJI gets banned or restricted, UMAC is a direct beneficiary."
+  },
+  {
+    symbol: "NOK", name: "Nokia",
+    theme: "Next-Gen Tech", sector: "Telecom Infrastructure",
+    avgCost: 10.34, lastPrice: 10.34, pctGain: 0.0, pctPortfolio: 0.24,
+    firstBuy: "Apr 2026",
+    isNew: true,
+    thesis: "One of only three companies in the world (alongside Ericsson and Samsung) that can build 5G networks at scale. With Huawei effectively banned from Western markets on security grounds, Nokia is capturing share across the U.S., Europe, and allied nations. The 5G buildout still has years to run, and 6G R&D is already underway. Solid dividend payer trading at a reasonable valuation for the infrastructure cycle ahead."
+  },
+  {
+    symbol: "KDK", name: "Kodiak AI",
+    theme: "Next-Gen Tech", sector: "Autonomous Trucking",
+    avgCost: 9.12, lastPrice: 7.79, pctGain: -14.6, pctPortfolio: 0.22,
+    firstBuy: "Oct 2025",
+    thesis: "Autonomous trucking company focused on long-haul freight corridors. Trucking is arguably the best first market for autonomous vehicles — highways are simpler than city streets, and the driver shortage creates real economic pull."
+  },
+  {
+    symbol: "ABAT", name: "American Battery Technology",
+    theme: "Next-Gen Tech", sector: "Battery Recycling",
+    avgCost: 5.59, lastPrice: 2.85, pctGain: -49.0, pctPortfolio: 0.19,
+    firstBuy: "Oct 2025",
+    thesis: "Battery recycling and domestic lithium extraction. The U.S. needs a closed-loop battery supply chain for EVs and energy storage. Down significantly but the long-term thesis on battery recycling economics is intact."
+  },
+
+  // ── Social & Consumer ──
+  {
+    symbol: "RDDT", name: "Reddit",
+    theme: "Social & Consumer", sector: "Social Media",
+    avgCost: 81.06, lastPrice: 138.38, pctGain: 70.7, pctPortfolio: 0.84,
+    firstBuy: "Oct 2024",
+    thesis: "Reddit has the most valuable corpus of human knowledge and opinion on the internet — and they're just beginning to monetize it. Their data licensing deals with AI companies are pure margin, and advertising revenue is inflecting as they improve targeting."
+  }
+];
+
+const THEME_ORDER = [
+  "Bitcoin Ecosystem",
+  "GSE Reform",
+  "AI & Computing",
+  "Defense & Aerospace",
+  "Energy Transition",
+  "Diversified Growth",
+  "Big Tech",
+  "Semiconductors & Photonics",
+  "Critical Minerals",
+  "Next-Gen Tech",
+  "Social & Consumer"
+];
+
+// ── Render ──
+function fmt(val) {
+  const s = val >= 0 ? '+' : '';
+  return s + val.toFixed(1) + '%';
+}
+function fmtPrice(v) {
+  if (v >= 1000) return '$' + v.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+  if (v >= 1) return '$' + v.toFixed(2);
+  return '$' + v.toFixed(4);
+}
+
+function render() {
+  const el = document.getElementById('portfolioContent');
+  let html = '';
+
+  for (const theme of THEME_ORDER) {
+    const positions = PORTFOLIO.filter(p => p.theme === theme);
+    if (!positions.length) continue;
+
+    const alloc = positions.reduce((s, p) => s + p.pctPortfolio, 0);
+
+    html += `<div class="theme-section">
+      <div class="theme-header">
+        <span class="theme-name">${theme}</span>
+        <span class="theme-alloc">${alloc.toFixed(1)}% of portfolio</span>
+      </div>`;
+
+    for (const p of positions) {
+      const gc = p.pctGain >= 0 ? 'green' : 'red';
+      const bw = Math.min(p.pctPortfolio / 24 * 100, 100);
+      const newClass = p.isNew ? ' is-new' : '';
+
+      html += `
+      <div class="position${newClass}" data-symbol="${p.symbol}">
+        <div class="pos-top">
+          <div class="pos-left">
+            <div class="ticker-line">
+              <span class="ticker">${p.displaySymbol || p.symbol}</span>
+              ${p.isNew ? '<span class="new-tag">NEW</span>' : ''}
+            </div>
+            <div class="name-line">${p.name} &middot; ${p.sector}</div>
+            ${p.firstBuy ? `<div class="date-line">${p.firstBuy}${p.lastBuy ? ' – ' + p.lastBuy : ''}</div>` : ''}
+          </div>
+          <div class="pos-right">
+            <div class="metric">
+              <div class="metric-val" data-field="price">${fmtPrice(p.lastPrice)}</div>
+              <div class="metric-label">Price</div>
+            </div>
+            <div class="metric">
+              <div class="metric-val">${fmtPrice(p.avgCost)}</div>
+              <div class="metric-label">Avg Cost</div>
+            </div>
+            <div class="metric">
+              <div class="metric-val ${gc}" data-field="gain">${fmt(p.pctGain)}</div>
+              <div class="metric-label">Return</div>
+            </div>
+            <div class="metric">
+              <div class="metric-val">${p.pctPortfolio.toFixed(1)}%</div>
+              <div class="metric-label">Weight</div>
+            </div>
+          </div>
+        </div>
+        <div class="alloc-bar-wrap"><div class="alloc-bar-fill" style="width:${bw}%"></div></div>
+        <div class="thesis">
+          <div class="thesis-label">Thesis</div>
+          <div class="thesis-text">${p.thesis}</div>
+        </div>
+      </div>`;
+    }
+    html += '</div>';
+  }
+  el.innerHTML = html;
+}
+
+// ── Live Prices (Finnhub) ──
+let apiKey = 'd7esqrhr01qi33g7hbt0d7esqrhr01qi33g7hbtg';
+
+function saveApiKey() {
+  apiKey = document.getElementById('apiKeyInput').value.trim();
+  if (apiKey) {
+    document.getElementById('apiSetup').classList.remove('visible');
+    fetchPrices();
+  }
+}
+
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  const key = params.get('key');
+  if (key) apiKey = key;
+  if (apiKey) setTimeout(fetchPrices, 500);
+})();
+
+async function fetchPrices() {
+  if (!apiKey) { document.getElementById('apiSetup').classList.add('visible'); return; }
+
+  const dot = document.getElementById('liveDot');
+  const timeEl = document.getElementById('updateTime');
+  dot.style.background = '#d97706';
+  timeEl.textContent = 'Updating prices\u2026';
+
+  const symbolMap = { 'BTC': 'BINANCE:BTCUSDT' };
+  let updated = 0;
+  const batch = 5;
+  const syms = PORTFOLIO.map(p => p.symbol);
+
+  for (let i = 0; i < syms.length; i += batch) {
+    const group = syms.slice(i, i + batch);
+    const promises = group.map(sym => {
+      const fSym = symbolMap[sym] || sym;
+      return fetch(`https://finnhub.io/api/v1/quote?symbol=${fSym}&token=${apiKey}`)
+        .then(r => r.json())
+        .then(d => {
+          if (d.c && d.c > 0) {
+            const pos = PORTFOLIO.find(p => p.symbol === sym);
+            if (pos) {
+              pos.lastPrice = d.c;
+              pos.pctGain = ((d.c - pos.avgCost) / pos.avgCost * 100);
+              updated++;
+            }
+          }
+        })
+        .catch(() => {});
+    });
+    await Promise.all(promises);
+    if (i + batch < syms.length) await new Promise(r => setTimeout(r, 1200));
+  }
+
+  render();
+  dot.style.background = '#059669';
+  const now = new Date();
+  timeEl.textContent = `Live \u00b7 ${now.toLocaleTimeString()} \u00b7 ${updated}/${syms.length} updated`;
+  setTimeout(fetchPrices, 300000);
+}
+
+render();
+</script>
+</body>
+</html>
