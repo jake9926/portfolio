@@ -304,6 +304,58 @@
     line-height: 1.7;
   }
 
+  /* Exited Positions */
+  .exited-section { margin-top: 48px; margin-bottom: 36px; }
+  .exited-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    margin-bottom: 10px;
+    background: var(--slate-600);
+    border-radius: 8px;
+  }
+  .exited-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 8px;
+  }
+  .exited-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-left: 3px solid var(--text-muted);
+    border-radius: 8px;
+    padding: 14px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    opacity: 0.85;
+  }
+  .exited-card:hover { opacity: 1; border-color: var(--border); }
+  .exited-info { display: flex; flex-direction: column; gap: 2px; }
+  .exited-ticker {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--slate-700);
+  }
+  .exited-name {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .exited-dates {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+  .exited-return {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 15px;
+    font-weight: 600;
+    text-align: right;
+  }
+
   /* Footer */
   footer {
     text-align: center;
@@ -337,10 +389,6 @@
   <div class="summary-item">
     <span class="summary-label">Total Return</span>
     <span class="summary-value green" id="totalReturn">+314.2%</span>
-  </div>
-  <div class="summary-item">
-    <span class="summary-label">Cash Invested</span>
-    <span class="summary-value">$247K</span>
   </div>
   <div class="summary-item">
     <span class="summary-label">Positions</span>
@@ -705,6 +753,21 @@ const PORTFOLIO = [
   }
 ];
 
+const EXITED = [
+  { symbol: "BYND", name: "Beyond Meat", bought: "2020", sold: "2021", returnPct: 110.5 },
+  { symbol: "MSFT", name: "Microsoft", bought: "Oct 2024", sold: "Apr 2026", returnPct: -9.5 },
+  { symbol: "GOOG", name: "Alphabet (Class C)", bought: "Sep 2024", sold: "Apr 2026", returnPct: 1.1 },
+  { symbol: "LYSDY", name: "Lynas Rare Earths", bought: "2023", sold: "2024", returnPct: -29.8 },
+  { symbol: "UURAF", name: "UEC (Uranium)", bought: "2023", sold: "2024", returnPct: -30.9 },
+  { symbol: "REEMF", name: "Rare Element Resources", bought: "2023", sold: "2024", returnPct: -37.8 },
+  { symbol: "PARA", name: "Paramount Global", bought: "2023", sold: "2024", returnPct: -52.8 },
+  { symbol: "USCM", name: "US Critical Metals", bought: "2024", sold: "2025", returnPct: -54.5 },
+  { symbol: "WWR", name: "Westwater Resources", bought: "2023", sold: "2024", returnPct: -55.4 },
+  { symbol: "BULL", name: "Pacer US Small Cap", bought: "2023", sold: "2024", returnPct: -60.3 },
+  { symbol: "IMSR", name: "Integrated Molten Salt Reactor", bought: "2024", sold: "Apr 2026", returnPct: -67.4 },
+  { symbol: "MSAI", name: "MultiSensor AI", bought: "2024", sold: "Apr 2026", returnPct: -91.2 }
+];
+
 const THEME_ORDER = [
   "Bitcoin Ecosystem",
   "GSE Reform",
@@ -790,6 +853,31 @@ function render() {
     }
     html += '</div>';
   }
+
+  // ── Exited Positions ──
+  if (EXITED.length) {
+    html += `<div class="exited-section">
+      <div class="exited-header">
+        <span class="theme-name">Exited Positions</span>
+        <span class="theme-alloc">${EXITED.length} closed</span>
+      </div>
+      <div class="exited-grid">`;
+    for (const e of EXITED) {
+      const gc = e.returnPct >= 0 ? 'green' : 'red';
+      const sign = e.returnPct >= 0 ? '+' : '';
+      html += `
+        <div class="exited-card">
+          <div class="exited-info">
+            <span class="exited-ticker">${e.symbol}</span>
+            <span class="exited-name">${e.name}</span>
+            <span class="exited-dates">${e.bought} → ${e.sold}</span>
+          </div>
+          <span class="exited-return ${gc}">${sign}${e.returnPct.toFixed(1)}%</span>
+        </div>`;
+    }
+    html += '</div></div>';
+  }
+
   el.innerHTML = html;
 }
 
