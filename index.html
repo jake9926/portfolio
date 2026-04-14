@@ -754,18 +754,18 @@ const PORTFOLIO = [
 ];
 
 const EXITED = [
-  { symbol: "BYND", name: "Beyond Meat", bought: "2020", sold: "2021", returnPct: 110.5 },
-  { symbol: "MSFT", name: "Microsoft", bought: "Oct 2024", sold: "Apr 2026", returnPct: -9.5 },
-  { symbol: "GOOG", name: "Alphabet (Class C)", bought: "Sep 2024", sold: "Apr 2026", returnPct: 1.1 },
-  { symbol: "LYSDY", name: "Lynas Rare Earths", bought: "2023", sold: "2024", returnPct: -29.8 },
-  { symbol: "UURAF", name: "UEC (Uranium)", bought: "2023", sold: "2024", returnPct: -30.9 },
-  { symbol: "REEMF", name: "Rare Element Resources", bought: "2023", sold: "2024", returnPct: -37.8 },
-  { symbol: "PARA", name: "Paramount Global", bought: "2023", sold: "2024", returnPct: -52.8 },
-  { symbol: "USCM", name: "US Critical Metals", bought: "2024", sold: "2025", returnPct: -54.5 },
-  { symbol: "WWR", name: "Westwater Resources", bought: "2023", sold: "2024", returnPct: -55.4 },
-  { symbol: "BULL", name: "Pacer US Small Cap", bought: "2023", sold: "2024", returnPct: -60.3 },
-  { symbol: "IMSR", name: "Integrated Molten Salt Reactor", bought: "2024", sold: "Apr 2026", returnPct: -67.4 },
-  { symbol: "MSAI", name: "MultiSensor AI", bought: "2024", sold: "Apr 2026", returnPct: -91.2 }
+  { symbol: "BYND", name: "Beyond Meat", bought: "Oct 2025", sold: "Oct 2025", returnPct: 110.5, peakWt: 0.01 },
+  { symbol: "GOOG", name: "Alphabet (Class C)", bought: "Sep 2024", sold: "Apr 2026", returnPct: 1.1, peakWt: 1.96 },
+  { symbol: "MSFT", name: "Microsoft", bought: "Oct 2024", sold: "Apr 2026", returnPct: -9.5, peakWt: 0.39 },
+  { symbol: "LYSDY", name: "Lynas Rare Earths", bought: "Oct 2025", sold: "Nov 2025", returnPct: -29.8, peakWt: 0.38 },
+  { symbol: "UURAF", name: "Uranium One Amercias", bought: "2024", sold: "2025", returnPct: -30.9, peakWt: 0.50 },
+  { symbol: "REEMF", name: "Rare Element Resources", bought: "Oct 2025", sold: "Nov 2025", returnPct: -37.8, peakWt: 0.96 },
+  { symbol: "PARA", name: "Paramount Global", bought: "Sep 2025", sold: "Oct 2025", returnPct: -52.8, peakWt: 1.00 },
+  { symbol: "USCM", name: "US Critical Metals", bought: "Oct 2025", sold: "Oct 2025", returnPct: -54.5, peakWt: 0.57 },
+  { symbol: "WWR", name: "Westwater Resources", bought: "Oct 2025", sold: "Nov 2025", returnPct: -55.4, peakWt: 0.98 },
+  { symbol: "BULL", name: "Pacer US Small Cap", bought: "2024", sold: "2025", returnPct: -60.3, peakWt: 0.50 },
+  { symbol: "IMSR", name: "Terrestrial Energy", bought: "2024", sold: "Apr 2026", returnPct: -67.4, peakWt: 0.02 },
+  { symbol: "MSAI", name: "MultiSensor AI", bought: "2024", sold: "Apr 2026", returnPct: -91.2, peakWt: 0.02 }
 ];
 
 const THEME_ORDER = [
@@ -856,10 +856,11 @@ function render() {
 
   // ── Exited Positions ──
   if (EXITED.length) {
+    const totalExitedWt = EXITED.reduce((s, e) => s + e.peakWt, 0);
     html += `<div class="exited-section">
       <div class="exited-header">
         <span class="theme-name">Exited Positions</span>
-        <span class="theme-alloc">${EXITED.length} closed</span>
+        <span class="theme-alloc">${EXITED.length} closed &middot; ~${totalExitedWt.toFixed(1)}% of portfolio at peak</span>
       </div>
       <div class="exited-grid">`;
     for (const e of EXITED) {
@@ -870,7 +871,7 @@ function render() {
           <div class="exited-info">
             <span class="exited-ticker">${e.symbol}</span>
             <span class="exited-name">${e.name}</span>
-            <span class="exited-dates">${e.bought} → ${e.sold}</span>
+            <span class="exited-dates">${e.bought} → ${e.sold} &middot; ${e.peakWt < 0.1 ? '<0.1' : e.peakWt.toFixed(1)}% wt</span>
           </div>
           <span class="exited-return ${gc}">${sign}${e.returnPct.toFixed(1)}%</span>
         </div>`;
