@@ -392,7 +392,7 @@
   </div>
   <div class="summary-item">
     <span class="summary-label">Positions</span>
-    <span class="summary-value" id="positionCount">43</span>
+    <span class="summary-value" id="positionCount">44</span>
   </div>
   <div class="summary-item">
     <span class="summary-label">Themes</span>
@@ -400,7 +400,7 @@
   </div>
   <div class="summary-item update-line">
     <span class="live-indicator" id="liveDot"></span>
-    <span id="updateTime">Prices as of April 13, 2026</span>
+    <span id="updateTime">Prices as of April 30, 2026</span>
   </div>
 </div>
 
@@ -566,6 +566,14 @@ const PORTFOLIO = [
     thesis: "GE's energy spin-off is the backbone of grid modernization. They make gas turbines, wind turbines, and grid equipment needed for the energy transition. As AI-driven electricity demand surges, GEV's order book is exploding."
   },
   {
+    symbol: "MYRG", name: "MYR Group",
+    theme: "Energy Transition", sector: "Data Center Electrification",
+    avgCost: 347.65, lastPrice: 347.65, pctGain: 0.0, pctPortfolio: 0.20,
+    firstBuy: "Apr 2026",
+    isNew: true,
+    thesis: "Specialty electrical contractor positioned squarely on the data center build-out wave. MYRG executes the high-voltage transmission, substation, and electrical infrastructure work that hyperscalers and utilities need to bring AI-scale power online — gigawatt-class data center campuses don't get built without contractors like this. As the grid struggles to keep up with AI demand, MYR's backlog reflects multi-year visibility on transmission, distribution, and commercial/industrial electrical work. A picks-and-shovels play on the AI capex cycle that gets paid whether the chip winners are NVDA, AMD, or someone else."
+  },
+  {
     symbol: "LEU", name: "Centrus Energy",
     theme: "Energy Transition", sector: "Nuclear Fuel",
     avgCost: 191.78, lastPrice: 191.78, pctGain: 0.0, pctPortfolio: 0.98,
@@ -722,11 +730,11 @@ const PORTFOLIO = [
   },
   {
     symbol: "NOK", name: "Nokia",
-    theme: "Next-Gen Tech", sector: "Telecom Infrastructure",
+    theme: "AI & Computing", sector: "6G & Edge AI Networking",
     avgCost: 10.34, lastPrice: 10.34, pctGain: 0.0, pctPortfolio: 0.24,
     firstBuy: "Apr 2026",
     isNew: true,
-    thesis: "One of only three companies in the world (alongside Ericsson and Samsung) that can build 5G networks at scale. With Huawei effectively banned from Western markets on security grounds, Nokia is capturing share across the U.S., Europe, and allied nations. The 5G buildout still has years to run, and 6G R&D is already underway. Solid dividend payer trading at a reasonable valuation for the infrastructure cycle ahead."
+    thesis: "The under-the-radar way to play 6G and AI at the edge. Nokia's partnership with NVIDIA on AI-RAN and edge compute puts them at the center of the next wireless cycle — where the network itself becomes an AI inference platform rather than just a pipe. As 6G standardization ramps and operators look to monetize edge compute alongside connectivity, Nokia's combined RAN, optical, and IP networking stack becomes a strategic asset. One of only three companies globally (alongside Ericsson and Samsung) that can build 5G/6G networks at scale, with Huawei effectively shut out of Western markets. Picks-and-shovels exposure to intelligent networks, with NVDA-tier credibility behind the AI angle."
   },
   {
     symbol: "KDK", name: "Kodiak AI",
@@ -791,6 +799,49 @@ function fmtPrice(v) {
   if (v >= 1000) return '$' + v.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
   if (v >= 1) return '$' + v.toFixed(2);
   return '$' + v.toFixed(4);
+}
+
+// ── Total Return: (current portfolio value) / (actual cash invested) - 1.
+// Cash invested is the sum of every external deposit ever made into Fidelity +
+// River, computed from the full transaction history. Profits reinvested into
+// new positions don't count as new cash, which is why this number runs much
+// higher than the cost-basis figure your brokerage shows.
+//
+// Share counts are anchored at first render from each position's pctPortfolio
+// snapshot weight + initial lastPrice. After that, fetchPrices() updates each
+// lastPrice and the headline number recomputes automatically. ──
+const CASH_INVESTED = 249_000; // total external cash deposited (Fidelity + River, through Apr 2026)
+const PORTFOLIO_VALUE_AT_SNAPSHOT = 1_000_000; // approx total value when pctPortfolio weights were captured
+
+let SHARES_ANCHORED = false;
+function anchorShares() {
+  if (SHARES_ANCHORED) return;
+  for (const p of PORTFOLIO) {
+    p._shares = (p.lastPrice > 0)
+      ? (p.pctPortfolio / 100) * PORTFOLIO_VALUE_AT_SNAPSHOT / p.lastPrice
+      : 0;
+  }
+  SHARES_ANCHORED = true;
+}
+function computeTotalReturn() {
+  anchorShares();
+  let totalValue = 0;
+  for (const p of PORTFOLIO) {
+    if (!p._shares) continue;
+    totalValue += p._shares * p.lastPrice;
+  }
+  return CASH_INVESTED > 0 ? (totalValue / CASH_INVESTED - 1) * 100 : 0;
+}
+function updateSummary() {
+  const tr = computeTotalReturn();
+  const trEl = document.getElementById('totalReturn');
+  if (trEl) {
+    const sign = tr >= 0 ? '+' : '';
+    trEl.textContent = sign + tr.toFixed(1) + '%';
+    trEl.className = 'summary-value ' + (tr >= 0 ? 'green' : 'red');
+  }
+  const pcEl = document.getElementById('positionCount');
+  if (pcEl) pcEl.textContent = String(PORTFOLIO.length);
 }
 
 function render() {
@@ -880,6 +931,7 @@ function render() {
   }
 
   el.innerHTML = html;
+  updateSummary();
 }
 
 // ── Live Prices (Finnhub) ──
@@ -943,6 +995,4 @@ async function fetchPrices() {
 }
 
 render();
-</script>
-</body>
-</html>
+</scrip
